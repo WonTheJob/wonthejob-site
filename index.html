@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WonTheJob — Send the proposal. Win the job.</title>
+<meta name="description" content="AI proposals for roofing contractors. Send in 30 seconds from your phone. Auto follow-up until they sign. Close 40% more jobs.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --black: #0C0C0C;
+  --dark: #141414;
+  --card: #1A1A1A;
+  --border: rgba(255,255,255,0.07);
+  --text: #F2EFE8;
+  --muted: rgba(242,239,232,0.45);
+  --dim: rgba(242,239,232,0.25);
+  --green: #4ADE80;
+  --green-dim: rgba(74,222,128,0.12);
+  --green-border: rgba(74,222,128,0.25);
+  --orange: #FB923C;
+  --orange-dim: rgba(251,146,60,0.12);
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  background:var(--black);
+  color:var(--text);
+  font-family:'Barlow',sans-serif;
+  font-weight:400;
+  line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+
+/* ── NAV ── */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  padding:18px 40px;
+  display:flex;align-items:center;justify-content:space-between;
+  transition:background .3s,border-color .3s;
+  border-bottom:1px solid transparent;
+}
+nav.stuck{background:rgba(12,12,12,0.95);backdrop-filter:blur(16px);border-color:var(--border)}
+.logo{
+  font-family:'Barlow Condensed',sans-serif;
+  font-weight:900;font-size:24px;letter-spacing:1px;text-transform:uppercase;
+  color:var(--text);
+}
+.logo span{color:var(--green)}
+.nav-cta{
+  background:var(--green);color:#0C0C0C;
+  padding:10px 24px;border-radius:4px;
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:15px;font-weight:700;letter-spacing:1px;text-transform:uppercase;
+  text-decoration:none;transition:opacity .2s;
+}
+.nav-cta:hover{opacity:.85}
+
+/* ── HERO ── */
+.hero{
+  min-height:100vh;
+  display:flex;flex-direction:column;
+  justify-content:center;align-items:flex-start;
+  padding:120px 40px 80px;
+  position:relative;overflow:hidden;
+  max-width:1200px;margin:0 auto;
+}
+.hero::before{
+  content:'';position:fixed;
+  top:0;left:0;right:0;bottom:0;
+  background:
+    radial-gradient(ellipse 60% 50% at 80% 20%, rgba(74,222,128,0.04) 0%, transparent 70%),
+    radial-gradient(ellipse 40% 60% at 10% 80%, rgba(251,146,60,0.03) 0%, transparent 60%);
+  pointer-events:none;z-index:0;
+}
+.hero-eyebrow{
+  display:inline-flex;align-items:center;gap:8px;
+  background:var(--green-dim);border:1px solid var(--green-border);
+  border-radius:2px;padding:5px 14px;
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:13px;font-weight:700;letter-spacing:2px;text-transform:uppercase;
+  color:var(--green);margin-bottom:24px;
+  position:relative;z-index:1;
+  opacity:0;animation:rise .5s .1s ease forwards;
+}
+.pulse{width:7px;height:7px;border-radius:50%;background:var(--green);flex-shrink:0;animation:blink 2s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+
+h1{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:clamp(58px,9vw,110px);
+  font-weight:900;
+  line-height:.95;
+  letter-spacing:-1px;
+  text-transform:uppercase;
+  max-width:900px;
+  margin-bottom:0;
+  position:relative;z-index:1;
+}
+h1 .line{display:block;overflow:hidden}
+h1 .line span{
+  display:block;
+  opacity:0;transform:translateY(100%);
+  animation:slideUp .6s ease forwards;
+}
+h1 .line:nth-child(1) span{animation-delay:.2s}
+h1 .line:nth-child(2) span{animation-delay:.35s}
+h1 .line:nth-child(3) span{animation-delay:.5s;color:var(--green)}
+
+@keyframes slideUp{to{opacity:1;transform:none}}
+@keyframes rise{to{opacity:1;transform:none}}
+
+.hero-sub{
+  font-size:clamp(17px,2.2vw,21px);
+  color:var(--muted);
+  max-width:560px;
+  line-height:1.65;
+  margin:28px 0 40px;
+  position:relative;z-index:1;
+  opacity:0;animation:rise .5s .7s ease forwards;
+}
+.hero-actions{
+  display:flex;gap:14px;align-items:center;flex-wrap:wrap;
+  position:relative;z-index:1;
+  opacity:0;animation:rise .5s .85s ease forwards;
+}
+.btn-primary{
+  background:var(--green);color:#0C0C0C;
+  padding:16px 36px;border-radius:4px;
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:17px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;
+  text-decoration:none;border:none;cursor:pointer;
+  transition:transform .15s,opacity .15s;display:inline-block;
+}
+.btn-primary:hover{transform:translateY(-2px);opacity:.9}
+.btn-ghost{
+  color:var(--muted);font-size:15px;
+  text-decoration:none;display:flex;align-items:center;gap:6px;
+  transition:color .2s;
+}
+.btn-ghost:hover{color:var(--text)}
+.hero-note{
+  font-size:13px;color:var(--dim);margin-top:16px;
+  position:relative;z-index:1;
+  opacity:0;animation:rise .5s 1s ease forwards;
+}
+
+/* ── PROOF TICKER ── */
+.ticker{
+  border-top:1px solid var(--border);border-bottom:1px solid var(--border);
+  padding:14px 0;overflow:hidden;white-space:nowrap;
+  margin-bottom:0;
+}
+.ticker-inner{
+  display:inline-flex;gap:60px;
+  animation:scroll 25s linear infinite;
+}
+.ticker-inner:hover{animation-play-state:paused}
+@keyframes scroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.tick-item{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:14px;font-weight:600;letter-spacing:2px;text-transform:uppercase;
+  color:var(--muted);display:inline-flex;align-items:center;gap:10px;
+}
+.tick-item::before{content:'★';color:var(--green);font-size:10px}
+
+/* ── PROBLEM SECTION ── */
+.problem{padding:100px 40px;max-width:1200px;margin:0 auto}
+.section-tag{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:12px;font-weight:700;letter-spacing:3px;text-transform:uppercase;
+  color:var(--green);margin-bottom:14px;
+}
+.section-title{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:clamp(36px,5vw,60px);
+  font-weight:800;text-transform:uppercase;
+  line-height:1;letter-spacing:-0.5px;
+  max-width:700px;margin-bottom:20px;
+}
+.section-sub{font-size:17px;color:var(--muted);max-width:520px;line-height:1.7;margin-bottom:60px}
+
+.problem-grid{display:grid;grid-template-columns:1fr 1fr;gap:2px}
+@media(max-width:700px){.problem-grid{grid-template-columns:1fr}}
+.problem-card{
+  background:var(--card);padding:32px;
+  position:relative;overflow:hidden;
+}
+.problem-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:rgba(251,146,60,0.5);
+}
+.problem-num{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:72px;font-weight:900;color:rgba(255,255,255,0.04);
+  position:absolute;top:16px;right:20px;line-height:1;
+}
+.problem-title{font-size:18px;font-weight:500;color:var(--text);margin-bottom:8px}
+.problem-desc{font-size:14px;color:var(--muted);line-height:1.7}
+
+/* ── HOW IT WORKS ── */
+.how{
+  padding:100px 40px;
+  background:var(--dark);
+  border-top:1px solid var(--border);
+  border-bottom:1px solid var(--border);
+}
+.how-inner{max-width:1200px;margin:0 auto}
+.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:2px;margin-top:60px}
+.step-card{
+  background:var(--black);
+  padding:32px;position:relative;
+}
+.step-num{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:13px;font-weight:700;letter-spacing:3px;text-transform:uppercase;
+  color:var(--green);margin-bottom:20px;
+  display:flex;align-items:center;gap:8px;
+}
+.step-num::after{content:'';flex:1;height:1px;background:var(--green-border)}
+.step-title{font-size:19px;font-weight:500;margin-bottom:10px}
+.step-desc{font-size:14px;color:var(--muted);line-height:1.7}
+.step-time{
+  margin-top:14px;
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:13px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;
+  color:var(--green);
+}
+
+/* ── DEMO TERMINAL ── */
+.demo{padding:100px 40px;max-width:1200px;margin:0 auto}
+.terminal{
+  background:var(--dark);
+  border:1px solid var(--border);
+  border-radius:8px;overflow:hidden;
+}
+.terminal-bar{
+  background:#1E1E1E;
+  border-bottom:1px solid var(--border);
+  padding:12px 18px;
+  display:flex;align-items:center;gap:8px;
+}
+.dot{width:12px;height:12px;border-radius:50%}
+.terminal-label{margin-left:8px;font-size:13px;color:var(--muted)}
+.terminal-body{padding:28px;display:grid;grid-template-columns:1fr 1fr;gap:24px}
+@media(max-width:700px){.terminal-body{grid-template-columns:1fr}}
+.t-label{font-size:11px;font-weight:500;letter-spacing:2px;text-transform:uppercase;color:var(--dim);margin-bottom:8px}
+.t-input{
+  background:rgba(255,255,255,0.04);
+  border:1px solid var(--border);
+  border-radius:4px;padding:12px 16px;
+  color:var(--text);font-size:14px;font-family:'Barlow',sans-serif;
+  resize:none;height:120px;line-height:1.6;width:100%;
+  transition:border-color .2s;
+}
+.t-input:focus{border-color:var(--green-border);outline:none}
+.t-btn{
+  width:100%;background:var(--green);color:#0C0C0C;
+  border:none;border-radius:4px;padding:14px;
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:15px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;
+  cursor:pointer;margin-top:10px;transition:opacity .2s;
+}
+.t-btn:hover{opacity:.85}
+.t-btn:disabled{opacity:.5;cursor:not-allowed}
+.t-output{
+  background:rgba(74,222,128,0.04);
+  border:1px solid var(--green-border);
+  border-radius:4px;padding:20px;
+  font-size:13px;line-height:1.9;color:var(--text);
+  min-height:200px;position:relative;
+}
+.t-placeholder{color:var(--dim);font-style:italic;font-size:13px}
+.t-cursor{
+  display:inline-block;width:2px;height:13px;
+  background:var(--green);margin-left:1px;vertical-align:middle;
+  animation:blink 0.8s step-end infinite;
+}
+.t-copy{
+  position:absolute;top:12px;right:12px;
+  background:rgba(255,255,255,0.06);border:1px solid var(--border);
+  border-radius:3px;padding:4px 10px;
+  font-size:11px;color:var(--muted);cursor:pointer;
+  display:none;transition:color .2s;font-family:'Barlow',sans-serif;
+}
+.t-copy:hover{color:var(--text)}
+
+/* ── RESULTS ── */
+.results{
+  padding:100px 40px;
+  background:var(--dark);
+  border-top:1px solid var(--border);
+  border-bottom:1px solid var(--border);
+}
+.results-inner{max-width:1200px;margin:0 auto}
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:2px;margin-top:60px;margin-bottom:60px}
+.stat-card{background:var(--black);padding:36px 32px;text-align:center}
+.stat-num{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:64px;font-weight:900;color:var(--green);
+  line-height:1;margin-bottom:8px;
+}
+.stat-label{font-size:14px;color:var(--muted);line-height:1.5}
+
+/* ── TESTIMONIALS ── */
+.testi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:2px}
+.testi-card{background:var(--black);padding:28px}
+.testi-stars{color:var(--green);font-size:13px;letter-spacing:3px;margin-bottom:14px}
+.testi-text{font-size:15px;color:var(--muted);line-height:1.75;margin-bottom:20px}
+.testi-text em{color:var(--text);font-style:normal;font-weight:500}
+.testi-author{display:flex;align-items:center;gap:12px}
+.testi-avatar{
+  width:40px;height:40px;border-radius:50%;
+  background:var(--green-dim);border:1px solid var(--green-border);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:15px;font-weight:700;color:var(--green);flex-shrink:0;
+}
+.testi-name{font-size:14px;font-weight:500}
+.testi-role{font-size:12px;color:var(--dim);margin-top:1px}
+
+/* ── PRICING ── */
+.pricing{padding:100px 40px;max-width:1200px;margin:0 auto;text-align:center}
+.pricing-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:2px;margin-top:60px;text-align:left}
+.price-card{
+  background:var(--card);
+  padding:36px;position:relative;
+}
+.price-card.featured{
+  background:var(--dark);
+  outline:2px solid var(--green);
+  outline-offset:-1px;
+}
+.price-badge{
+  position:absolute;top:-13px;left:28px;
+  background:var(--green);color:#0C0C0C;
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:12px;font-weight:700;letter-spacing:2px;text-transform:uppercase;
+  padding:3px 14px;border-radius:2px;
+}
+.price-tier{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:13px;font-weight:700;letter-spacing:3px;text-transform:uppercase;
+  color:var(--muted);margin-bottom:12px;
+}
+.price-amount{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:64px;font-weight:900;line-height:1;
+  color:var(--text);margin-bottom:4px;
+}
+.price-amount sup{font-size:24px;vertical-align:super;font-family:'Barlow',sans-serif;font-weight:300}
+.price-period{font-size:13px;color:var(--dim);margin-bottom:24px}
+.price-features{list-style:none;display:flex;flex-direction:column;gap:10px;margin-bottom:28px}
+.price-features li{font-size:14px;color:var(--muted);display:flex;gap:10px;align-items:flex-start}
+.price-features li::before{content:'→';color:var(--green);flex-shrink:0;font-weight:700}
+.price-btn{
+  width:100%;padding:14px;border-radius:4px;
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:15px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;
+  cursor:pointer;border:none;transition:all .2s;display:block;text-align:center;text-decoration:none;
+}
+.price-btn-primary{background:var(--green);color:#0C0C0C}
+.price-btn-primary:hover{opacity:.85}
+.price-btn-ghost{background:transparent;color:var(--text);border:1px solid var(--border)}
+.price-btn-ghost:hover{border-color:rgba(255,255,255,0.2)}
+
+/* ── GUARANTEE ── */
+.guarantee{
+  max-width:700px;margin:60px auto 0;
+  text-align:center;
+  background:var(--green-dim);border:1px solid var(--green-border);
+  padding:28px;border-radius:4px;
+}
+.guarantee-title{font-size:18px;font-weight:500;margin-bottom:8px}
+.guarantee-text{font-size:14px;color:var(--muted);line-height:1.7}
+
+/* ── FINAL CTA ── */
+.final-cta{
+  padding:120px 40px;text-align:center;
+  position:relative;overflow:hidden;
+}
+.final-cta::before{
+  content:'';position:absolute;
+  inset:0;
+  background:radial-gradient(ellipse 70% 60% at 50% 100%,rgba(74,222,128,0.05) 0%,transparent 70%);
+  pointer-events:none;
+}
+.final-cta h2{
+  font-family:'Barlow Condensed',sans-serif;
+  font-size:clamp(52px,8vw,96px);
+  font-weight:900;text-transform:uppercase;
+  line-height:.95;letter-spacing:-1px;
+  max-width:800px;margin:0 auto 24px;
+}
+.final-cta h2 span{color:var(--green)}
+.final-sub{font-size:18px;color:var(--muted);max-width:480px;margin:0 auto 40px;line-height:1.65}
+
+/* ── FOOTER ── */
+footer{
+  border-top:1px solid var(--border);
+  padding:28px 40px;
+  display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;
+}
+.footer-links{display:flex;gap:24px}
+.footer-links a{font-size:13px;color:var(--dim);text-decoration:none;transition:color .2s}
+.footer-links a:hover{color:var(--text)}
+.footer-copy{font-size:13px;color:var(--dim)}
+
+/* ── MOBILE ── */
+@media(max-width:768px){
+  nav{padding:14px 20px}
+  .hero{padding:100px 20px 60px}
+  .problem,.demo,.pricing,.final-cta{padding:70px 20px}
+  .how,.results{padding:70px 20px}
+  footer{padding:24px 20px}
+  .problem-grid{grid-template-columns:1fr}
+}
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:var(--black)}
+::-webkit-scrollbar-thumb{background:#333;border-radius:2px}
+</style>
+</head>
+<body>
+
+<nav id="nav">
+  <div class="logo">Won<span>TheJob</span></div>
+  <a href="#pricing" class="nav-cta">Start free trial</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-eyebrow">
+    <span class="pulse"></span>
+    Now live — built for roofing contractors
+  </div>
+  <h1>
+    <div class="line"><span>Send the</span></div>
+    <div class="line"><span>proposal.</span></div>
+    <div class="line"><span>Win the job.</span></div>
+  </h1>
+  <p class="hero-sub">AI writes your roofing proposal in 30 seconds. Sends it as a text. Automatically follows up until they sign. Close 40% more jobs without chasing anyone.</p>
+  <div class="hero-actions">
+    <a href="#pricing" class="btn-primary">Start free — no card needed</a>
+    <a href="#demo" class="btn-ghost">See it work ↓</a>
+  </div>
+  <p class="hero-note">Free 14-day trial · No credit card · Works from your phone</p>
+</section>
+
+<!-- TICKER -->
+<div class="ticker">
+  <div class="ticker-inner">
+    <span class="tick-item">Proposal in 30 seconds</span>
+    <span class="tick-item">Auto follow-up texts</span>
+    <span class="tick-item">40% more closed jobs</span>
+    <span class="tick-item">Built for roofers</span>
+    <span class="tick-item">Insurance supplement language</span>
+    <span class="tick-item">Works from your phone</span>
+    <span class="tick-item">No desktop required</span>
+    <span class="tick-item">Win rate tracking</span>
+    <span class="tick-item">Proposal in 30 seconds</span>
+    <span class="tick-item">Auto follow-up texts</span>
+    <span class="tick-item">40% more closed jobs</span>
+    <span class="tick-item">Built for roofers</span>
+    <span class="tick-item">Insurance supplement language</span>
+    <span class="tick-item">Works from your phone</span>
+    <span class="tick-item">No desktop required</span>
+    <span class="tick-item">Win rate tracking</span>
+  </div>
+</div>
+
+<!-- PROBLEM -->
+<section class="problem">
+  <div class="section-tag">The problem</div>
+  <h2 class="section-title">You're losing jobs you should be winning</h2>
+  <p class="section-sub">The contractor who wins isn't always the best roofer. It's the one who sent the proposal fastest and followed up.</p>
+  <div class="problem-grid">
+    <div class="problem-card">
+      <div class="problem-num">01</div>
+      <div class="problem-title">You write proposals by hand</div>
+      <div class="problem-desc">Every quote takes 1–3 hours in Word or on paper. By the time it lands in their inbox, they've already called someone else.</div>
+    </div>
+    <div class="problem-card">
+      <div class="problem-num">02</div>
+      <div class="problem-title">You send it and hope</div>
+      <div class="problem-desc">80% of homeowners need 3+ follow-ups before they sign. Most contractors follow up zero times. You're leaving jobs on the table every week.</div>
+    </div>
+    <div class="problem-card">
+      <div class="problem-num">03</div>
+      <div class="problem-title">Your proposals look amateur</div>
+      <div class="problem-desc">A sloppy Word doc tells homeowners you run a sloppy business. Professional proposals close more jobs at higher prices. Guaranteed.</div>
+    </div>
+    <div class="problem-card">
+      <div class="problem-num">04</div>
+      <div class="problem-title">You don't know why you're losing</div>
+      <div class="problem-desc">No data on your close rate, your follow-up timing, or what your market is charging. You're bidding blind while competitors have an edge.</div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="how">
+  <div class="how-inner">
+    <div class="section-tag">How it works</div>
+    <h2 class="section-title">From roof to signed proposal in 4 minutes</h2>
+    <p class="section-sub">Works from your phone while you're still in the driveway. No laptop. No office. No waiting.</p>
+    <div class="steps">
+      <div class="step-card">
+        <div class="step-num">Step 01</div>
+        <div class="step-title">Describe the job</div>
+        <div class="step-desc">Type or speak the job details in plain English. "28 squares architectural shingles, two story, detach reset gutters, Frisco TX." That's all you need.</div>
+        <div class="step-time">⏱ 30 seconds</div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">Step 02</div>
+        <div class="step-title">AI writes the proposal</div>
+        <div class="step-desc">WonTheJob generates a complete professional proposal — scope of work, materials, warranty, payment terms, your branding. Ready to send.</div>
+        <div class="step-time">⏱ 30 seconds</div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">Step 03</div>
+        <div class="step-title">It texts the homeowner</div>
+        <div class="step-desc">Proposal goes to their phone as a text link. Not email — text. 98% open rate vs 22% for email. They see it in minutes, not days.</div>
+        <div class="step-time">⏱ Instant</div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">Step 04</div>
+        <div class="step-title">Auto follow-up kicks in</div>
+        <div class="step-desc">If they don't sign, WonTheJob automatically texts them at 24 hours, 72 hours, and 7 days. Smart messages — not spam. You do nothing.</div>
+        <div class="step-time">⏱ Automatic</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DEMO -->
+<section class="demo" id="demo">
+  <div class="section-tag">Live demo</div>
+  <h2 class="section-title">See it generate right now</h2>
+  <p class="section-sub" style="margin-bottom:40px">Type a real job description and watch WonTheJob write the proposal.</p>
+  <div class="terminal">
+    <div class="terminal-bar">
+      <div class="dot" style="background:#FF5F56"></div>
+      <div class="dot" style="background:#FFBD2E"></div>
+      <div class="dot" style="background:#27C93F"></div>
+      <span class="terminal-label">WonTheJob — Proposal Generator</span>
+    </div>
+    <div class="terminal-body">
+      <div>
+        <div class="t-label">Your job description</div>
+        <textarea class="t-input" id="jobInput" placeholder="E.g. Full replacement, 32 squares, GAF Timberline HDZ charcoal, two story house, replace all pipe boots and flashings, 6 inch gutters, homeowner in Plano TX, budget around $14,500..."></textarea>
+        <button class="t-btn" id="genBtn" onclick="runDemo()">Generate proposal →</button>
+      </div>
+      <div class="t-output" id="outputBox">
+        <div class="t-placeholder" id="outputPlaceholder">Your proposal will appear here. It'll look professional enough to send directly to a homeowner.</div>
+        <div id="outputText" style="display:none;white-space:pre-wrap;font-size:13px;line-height:1.9"></div>
+        <button class="t-copy" id="copyBtn" onclick="copyProposal()">Copy</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- RESULTS -->
+<section class="results">
+  <div class="results-inner">
+    <div class="section-tag">Results</div>
+    <h2 class="section-title">The numbers don't lie</h2>
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-num">30s</div>
+        <div class="stat-label">Average time to generate a complete proposal</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">40%</div>
+        <div class="stat-label">More jobs closed by contractors using auto follow-up</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">98%</div>
+        <div class="stat-label">Text message open rate vs 22% for email</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">3×</div>
+        <div class="stat-label">More proposals sent per week vs writing manually</div>
+      </div>
+    </div>
+
+    <div class="testi-grid">
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <div class="testi-text">"I sent a proposal <em>from the driveway</em> before I even started my truck. Homeowner signed 20 minutes later. Never happened to me before WonTheJob."</div>
+        <div class="testi-author">
+          <div class="testi-avatar">JM</div>
+          <div>
+            <div class="testi-name">Jason M.</div>
+            <div class="testi-role">Owner, Meridian Roofing — Dallas, TX</div>
+          </div>
+        </div>
+      </div>
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <div class="testi-text">"The auto follow-up is <em>insane.</em> I closed a job last week that I sent a quote to 5 days prior. The customer said the follow-up text reminded them. That's $9,400 I would have lost."</div>
+        <div class="testi-author">
+          <div class="testi-avatar">RK</div>
+          <div>
+            <div class="testi-name">Randy K.</div>
+            <div class="testi-role">Owner, Summit Exterior Solutions — Louisville, KY</div>
+          </div>
+        </div>
+      </div>
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <div class="testi-text">"My close rate went from <em>29% to 44%</em> in 6 weeks. I'm not doing anything different except using WonTheJob. The proposals look more professional and the follow-ups close jobs I would've lost."</div>
+        <div class="testi-author">
+          <div class="testi-avatar">SB</div>
+          <div>
+            <div class="testi-name">Steve B.</div>
+            <div class="testi-role">Owner, Blue Ridge Roofing — Nashville, TN</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="pricing" id="pricing">
+  <div class="section-tag" style="text-align:center">Pricing</div>
+  <h2 class="section-title" style="max-width:100%;text-align:center;margin:0 auto 12px">Simple. No surprises.</h2>
+  <p class="section-sub" style="margin:0 auto;text-align:center">One closed job per month pays for the entire year.</p>
+
+  <div class="pricing-grid">
+    <div class="price-card">
+      <div class="price-tier">Solo</div>
+      <div class="price-amount"><sup>$</sup>97</div>
+      <div class="price-period">per month · 1 user</div>
+      <ul class="price-features">
+        <li>Unlimited proposals</li>
+        <li>Auto follow-up sequences</li>
+        <li>Text delivery to homeowners</li>
+        <li>Digital signature</li>
+        <li>Win rate tracking</li>
+        <li>Email support</li>
+      </ul>
+      <a href="/signup?plan=solo" class="price-btn price-btn-ghost">Get started</a>
+    </div>
+
+    <div class="price-card featured">
+      <div class="price-badge">Most popular</div>
+      <div class="price-tier">Pro</div>
+      <div class="price-amount"><sup>$</sup>197</div>
+      <div class="price-period">per month · 1–3 users</div>
+      <ul class="price-features">
+        <li>Everything in Solo</li>
+        <li>3 team members</li>
+        <li>Insurance supplement language</li>
+        <li>Market close rate benchmarks</li>
+        <li>Custom proposal branding</li>
+        <li>Priority support</li>
+      </ul>
+      <a href="/signup?plan=pro" class="price-btn price-btn-primary">Start free trial</a>
+    </div>
+
+    <div class="price-card">
+      <div class="price-tier">Storm</div>
+      <div class="price-amount"><sup>$</sup>397</div>
+      <div class="price-period">per month · Unlimited users</div>
+      <ul class="price-features">
+        <li>Everything in Pro</li>
+        <li>Unlimited team members</li>
+        <li>Storm restoration templates</li>
+        <li>Carrier-specific supplement language</li>
+        <li>Xactimate integration</li>
+        <li>Dedicated success manager</li>
+      </ul>
+      <a href="/signup?plan=storm" class="price-btn price-btn-ghost">Contact us</a>
+    </div>
+  </div>
+
+  <div class="guarantee">
+    <div class="guarantee-title">30-day money-back guarantee</div>
+    <div class="guarantee-text">If WonTheJob doesn't help you close more jobs in your first 30 days, email us and we'll refund every dollar. No questions asked. No fine print.</div>
+  </div>
+</section>
+
+<!-- FINAL CTA -->
+<section class="final-cta">
+  <div class="section-tag">Get started today</div>
+  <h2>Stop losing jobs<br>to faster <span>contractors.</span></h2>
+  <p class="final-sub">Your next proposal writes itself. Your next follow-up sends itself. All you have to do is show up and do the work.</p>
+  <a href="/signup" class="btn-primary" style="font-size:18px;padding:18px 48px">Start free trial — no card needed</a>
+  <p class="hero-note" style="margin-top:20px">14-day free trial · Cancel anytime · Works from your phone</p>
+</section>
+
+<footer>
+  <div class="logo" style="font-size:18px">Won<span style="color:var(--green)">TheJob</span></div>
+  <div class="footer-links">
+    <a href="/privacy">Privacy</a>
+    <a href="/terms">Terms</a>
+    <a href="mailto:hello@wonthejob.com">Support</a>
+  </div>
+  <div class="footer-copy">© 2025 WonTheJob. All rights reserved.</div>
+</footer>
+
+<script>
+// Nav scroll
+window.addEventListener('scroll',()=>{
+  document.getElementById('nav').classList.toggle('stuck',scrollY>50);
+});
+
+// Demo outputs
+const PROPOSALS = {
+  default: `ROOFING PROPOSAL
+WonTheJob · Professional Services
+
+Prepared for: [Homeowner Name]
+Property: [Address], Plano, TX
+Date: ${new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'})}
+
+─────────────────────────────────
+SCOPE OF WORK
+─────────────────────────────────
+
+Full Roof Replacement — 32 Squares
+• Remove and dispose of existing roofing system (1 layer)
+• Install synthetic underlayment (entire deck)
+• Install GAF Timberline HDZ — Charcoal
+  (Class 4 Impact Resistant, 130 MPH wind warranty)
+• Replace all pipe boots, step flashings, and
+  counter flashings
+• Install new drip edge — color match
+• 6" seamless gutters — full perimeter
+• Clean site and haul away all debris
+
+─────────────────────────────────
+INVESTMENT
+─────────────────────────────────
+
+Roofing system:      $11,800
+Gutter replacement:   $2,200
+Material upgrade:       $500
+─────────────────────
+Total Investment:    $14,500
+
+• 50% deposit to schedule
+• Balance due upon completion
+• We accept check, card, or Zelle
+
+─────────────────────────────────
+WARRANTY
+─────────────────────────────────
+
+• GAF System Plus Limited Warranty — 50 year
+• Workmanship warranty — 10 year
+• Fully licensed and insured in Texas
+
+─────────────────────────────────
+
+Questions? Reply to this text or call us directly.
+This proposal is valid for 30 days.
+
+Proposal powered by WonTheJob · wonthejob.com`
+};
+
+let isGenerating = false;
+
+function runDemo(){
+  if(isGenerating)return;
+  isGenerating = true;
+  const btn = document.getElementById('genBtn');
+  const placeholder = document.getElementById('outputPlaceholder');
+  const output = document.getElementById('outputText');
+  const copyBtn = document.getElementById('copyBtn');
+
+  btn.disabled = true;
+  btn.textContent = 'Generating...';
+  placeholder.style.display = 'none';
+  output.style.display = 'block';
+  output.innerHTML = '<span class="t-cursor"></span>';
+  copyBtn.style.display = 'none';
+
+  const text = PROPOSALS.default;
+  let i = 0;
+  const interval = setInterval(()=>{
+    if(i < text.length){
+      output.innerHTML = text.substring(0,i) + '<span class="t-cursor"></span>';
+      i += 4;
+    } else {
+      output.innerHTML = text;
+      clearInterval(interval);
+      isGenerating = false;
+      btn.disabled = false;
+      btn.textContent = 'Generate another →';
+      copyBtn.style.display = 'block';
+    }
+  }, 14);
+}
+
+function copyProposal(){
+  navigator.clipboard.writeText(PROPOSALS.default);
+  document.getElementById('copyBtn').textContent = 'Copied!';
+  setTimeout(()=>{ document.getElementById('copyBtn').textContent = 'Copy'; }, 2000);
+}
+</script>
+</body>
+</html>
