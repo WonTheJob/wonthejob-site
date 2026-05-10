@@ -404,7 +404,7 @@ footer{border-top:1px solid var(--border);padding:28px 48px;display:flex;justify
         <div class="d-label">Your proposal</div>
         <div class="d-output" id="output">
           <div class="d-placeholder" id="placeholder">Your professional proposal appears here in seconds.<br><br>Enter your job details on the left and hit generate. This is what your homeowner receives — branded, detailed, and ready to sign.</div>
-          <span id="outputText" style="display:none"></span>
+          <div id="outputText" style="display:none;white-space:pre-wrap;font-size:12px;line-height:1.9"></div>
           <button class="d-copy" id="copyBtn" onclick="doCopy()">Copy</button>
         </div>
       </div>
@@ -675,7 +675,7 @@ async function runGenerate(){
   const copyBtn=document.getElementById('copyBtn');
   btn.disabled=true;btn.textContent='Writing your proposal...';
   placeholder.style.display='none';
-  out.style.display='inline';
+  out.style.display='block';
   out.innerHTML='<span style="color:var(--green);font-family:Barlow Condensed,sans-serif;font-size:13px;letter-spacing:1px">GENERATING YOUR PROPOSAL</span><span class="cursor"></span>';
   copyBtn.style.display='none';
   try{
