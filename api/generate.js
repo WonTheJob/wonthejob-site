@@ -25,62 +25,72 @@ export default async function handler(req, res) {
         model: 'gpt-4o-mini',
         messages: [
           {
-            role: 'system',
-            content: `You write roofing proposals. Always write the COMPLETE proposal with ALL sections filled in with real content. Never leave any section empty. Today is ${today}.
-
-You MUST include real bullet points under SCOPE OF WORK and MATERIALS. These sections cannot be empty.`
-          },
-          {
             role: 'user',
-            content: `Write a complete roofing proposal for this job. Include ALL sections with real content. The SCOPE OF WORK and MATERIALS sections MUST have detailed bullet points listing every item of work and every material.
+            content: `You are a roofing proposal writer. Write a complete proposal using the job details below. Today is ${today}.
 
-Job details: ${jobDescription}
+Job: ${jobDescription}
 
-Write the proposal now in this exact format:
+Write the proposal exactly like this example — fill in every section with real details from the job above:
 
-[Company Name from input]
-Professional Roofing Services | Licensed & Insured
+---
+JOHNSON ROOFING LLC
+Professional Roofing Services | Licensed and Insured
 
 ROOFING PROPOSAL
 
-Prepared for: [customer name]
-Property: [address]
+Prepared for: Mike Smith
+Property: 4521 Oak Drive, Louisville KY
 Date: ${today}
 Valid for 30 days
 
-SCOPE OF WORK
+SCOPE OF WORK:
+- Remove and dispose of existing roofing system (1 layer)
+- Inspect roof deck and replace damaged boards as needed
+- Install GAF Feltbuster synthetic underlayment on entire deck
+- Install GAF Timberline HDZ Pewter Gray architectural shingles - 34 squares
+- Replace 6 pipe boot flashings with new rubber boots
+- Install new aluminum drip edge on all eaves and rakes - 50 linear feet
+- Detach and reset 6-inch seamless gutters on front and back
+- Replace all step flashings and counter flashings at walls
+- Perform full site cleanup and remove all debris and nails from property
 
-[List every single work item as a bullet point starting with a dash. Include removal of old roof, underlayment install, shingle install with exact brand and color, all extras mentioned like pipe boots, drip edge, gutters, flashings, cleanup. Minimum 6 bullet points.]
+MATERIALS:
+- GAF Timberline HDZ Architectural Shingles - Pewter Gray - Class 4 Impact Resistant
+- GAF Feltbuster Synthetic Underlayment
+- Aluminum drip edge - color matched to shingles
+- Rubber pipe boot flashings (6 units)
+- Roofing nails, sealants, and all required fasteners
 
-MATERIALS
-
-[List every material with exact brand names, colors, and specs as bullet points. Minimum 4 bullet points.]
-
-INVESTMENT
-
-[Break price into line items that add up to the total price]
-Total: $[exact price from input]
+INVESTMENT:
+Roofing system (34 squares): $13,200
+Drip edge and flashings: $1,400
+Pipe boot replacements: $600
+Gutter detach and reset: $1,600
+Total: $16,800
 
 Payment Terms:
-- Deposit: $[50% of price] due at scheduling
-- Balance: $[50% of price] due upon completion
-- Accepted: Check, Cash, Card, Zelle
+- Deposit: $8,400 due at scheduling
+- Balance: $8,400 due upon completion
+- We accept: Check, Cash, Card, or Zelle
 
-WARRANTY
-
-- [Manufacturer warranty for specific shingle brand mentioned]
-- Workmanship: 10 years
-- Fully licensed and insured
+WARRANTY:
+- GAF System Plus Limited Warranty: 50 years on shingles
+- Workmanship warranty: 10 years
+- Fully licensed and insured in Kentucky
 
 READY TO GET STARTED?
-Reply or call to confirm. We lock in your date and collect the deposit.
+Reply to this message or call us to confirm your start date.
+Questions? We are available 7 days a week.
 
-[Company Name]
-Proposal powered by WonTheJob`
+Johnson Roofing LLC
+Proposal powered by WonTheJob
+---
+
+Now write the same style proposal using the actual job details I gave you above. Replace every detail with the real information from the job. Keep the exact same format and section names.`
           }
         ],
         max_tokens: 1500,
-        temperature: 0.2,
+        temperature: 0.1,
       })
     });
 
