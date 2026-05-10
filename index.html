@@ -673,31 +673,50 @@ async function runGenerate(){
   const placeholder=document.getElementById('placeholder');
   const out=document.getElementById('outputText');
   const copyBtn=document.getElementById('copyBtn');
-  btn.disabled=true;btn.textContent='Writing your proposal...';
+  btn.disabled=true;
+  btn.textContent='Writing your proposal...';
   placeholder.style.display='none';
   out.style.display='block';
-  out.innerHTML='<span style="color:var(--green);font-family:Barlow Condensed,sans-serif;font-size:13px;letter-spacing:1px">GENERATING YOUR PROPOSAL</span><span class="cursor"></span>';
+  out.innerHTML='<span style="color:var(--green);font-family:Barlow Condensed,sans-serif;font-size:13px;letter-spacing:1px">GENERATING YOUR PROPOSAL...</span>';
   copyBtn.style.display='none';
+  
+  // Always build local proposal immediately — guaranteed to work
+  const localProposal = buildFallback(input);
+  
+  // Try API in background
   try{
-    const res=await fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({jobDescription:input})});
+    const res=await fetch('/api/generate',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({jobDescription:input}),
+      signal: AbortSignal.timeout(8000)
+    });
     if(res.ok){
       const data=await res.json();
       const text=data.proposal||'';
-      out.innerHTML='';
-      let i=0;
-      const iv=setInterval(()=>{
-        if(i<text.length){out.innerHTML=text.substring(0,i).replace(/\n/g,'<br>')+'<span class="cursor"></span>';i+=4}
-        else{out.innerHTML=text.replace(/\n/g,'<br>');clearInterval(iv);busy=false;btn.disabled=false;btn.textContent='Generate another →';copyBtn.style.display='block';copyBtn.dataset.text=text}
-      },10);
-    }else throw new Error();
+      if(text && text.length > 100){
+        // API worked — show API result
+        out.innerHTML=text;
+        copyBtn.dataset.text=text;
+      } else {
+        // API returned empty — show local
+        out.innerHTML=localProposal;
+        copyBtn.dataset.text=localProposal;
+      }
+    } else {
+      out.innerHTML=localProposal;
+      copyBtn.dataset.text=localProposal;
+    }
   }catch(e){
-    const fb=buildFallback(input);
-    out.innerHTML='';let i=0;
-    const iv=setInterval(()=>{
-      if(i<fb.length){out.innerHTML=fb.substring(0,i).replace(/\n/g,'<br>')+'<span class="cursor"></span>';i+=4}
-      else{out.innerHTML=fb;clearInterval(iv);busy=false;btn.disabled=false;btn.textContent='Generate another →';copyBtn.style.display='block';copyBtn.dataset.text=fb}
-    },10);
+    // API failed — show local proposal (always works)
+    out.innerHTML=localProposal;
+    copyBtn.dataset.text=localProposal;
   }
+  
+  busy=false;
+  btn.disabled=false;
+  btn.textContent='Generate another →';
+  copyBtn.style.display='block';
 }
 
 function buildFallback(input){
