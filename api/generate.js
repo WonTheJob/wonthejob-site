@@ -1,11 +1,8 @@
 // api/generate.js
-// Vercel serverless function — generates roofing proposals via OpenAI
-
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
@@ -14,6 +11,8 @@ export default async function handler(req, res) {
 
   const apiKey = process.env.OPENAI_API_KEY;
   if (!apiKey) return res.status(500).json({ error: 'API key not configured' });
+
+  const today = new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
 
   try {
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
@@ -27,115 +26,74 @@ export default async function handler(req, res) {
         messages: [
           {
             role: 'system',
-            content: `You are an expert roofing contractor proposal writer. Write complete, detailed roofing proposals.
+            content: `You write roofing proposals. Always write the COMPLETE proposal with ALL sections filled in with real content. Never leave any section empty. Today is ${today}.
 
-Extract from the input: company name, customer name, address, all job details, all materials with brands/colors, price, phone.
-
-Write the proposal in this EXACT format - fill in EVERY section with real content:
-
-[COMPANY NAME]
-Professional Roofing Services | Licensed & Insured
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-ROOFING PROPOSAL
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-Prepared for: [customer name]
-Property:     [address]
-Date:         ${new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
-Valid for 30 days
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-SCOPE OF WORK
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-→ Remove and dispose of existing roofing system (all layers)
-→ Inspect and repair decking as needed
-→ Install [specific underlayment product]
-→ Install [exact shingle brand, product line, color] — [X] squares
-→ [List every additional item from input — pipe boots, drip edge, gutters, etc.]
-→ Replace all flashings, step flashings, and counter flashings
-→ Full site cleanup and haul away all debris
-→ Job site left cleaner than we found it
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-MATERIALS
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-→ [Exact shingle: brand, product line, color, class rating]
-→ [Underlayment product]
-→ [All other materials mentioned — gutters, pipe boots, drip edge, etc.]
-→ All fasteners, sealants, and flashing materials included
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-INVESTMENT
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-[Break into line items based on work described:]
-Roofing system ([X] sq):     $[amount]
-[Additional items]:           $[amount]
-─────────────────────────────
-TOTAL:                        $[EXACT PRICE FROM INPUT]
-
-Payment Terms:
-→ Deposit: $[50% of total] due at scheduling
-→ Balance: $[remaining] due upon completion
-→ We accept: Check, Cash, Card, or Zelle
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-WARRANTY
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-→ [Specific manufacturer warranty for the shingle brand mentioned]
-→ Workmanship: 10-year warranty
-→ Fully licensed and insured
-→ All work to local building code
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-READY TO GET STARTED?
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-Reply to this message or call [phone if provided] to confirm.
-We'll lock in your start date and collect the deposit.
-
-Questions? We're available 7 days a week.
-
-[COMPANY NAME]
-Proposal powered by WonTheJob · wonthejob.com
-
-CRITICAL RULES:
-- NEVER leave a section empty — always fill in real content
-- Use EXACT company name from input
-- Use EXACT price from input — never say "see attached"
-- Use EXACT materials, brands, colors from input
-- Scope of work must list EVERY item mentioned in the input
-- If squares mentioned, calculate line item prices that add up to the total`
+You MUST include real bullet points under SCOPE OF WORK and MATERIALS. These sections cannot be empty.`
           },
           {
             role: 'user',
-            content: `Write a complete roofing proposal. Fill in EVERY section with specific details from this job description. Do not leave any section blank:
+            content: `Write a complete roofing proposal for this job. Include ALL sections with real content. The SCOPE OF WORK and MATERIALS sections MUST have detailed bullet points listing every item of work and every material.
 
-${jobDescription}`
+Job details: ${jobDescription}
+
+Write the proposal now in this exact format:
+
+[Company Name from input]
+Professional Roofing Services | Licensed & Insured
+
+ROOFING PROPOSAL
+
+Prepared for: [customer name]
+Property: [address]
+Date: ${today}
+Valid for 30 days
+
+SCOPE OF WORK
+
+[List every single work item as a bullet point starting with a dash. Include removal of old roof, underlayment install, shingle install with exact brand and color, all extras mentioned like pipe boots, drip edge, gutters, flashings, cleanup. Minimum 6 bullet points.]
+
+MATERIALS
+
+[List every material with exact brand names, colors, and specs as bullet points. Minimum 4 bullet points.]
+
+INVESTMENT
+
+[Break price into line items that add up to the total price]
+Total: $[exact price from input]
+
+Payment Terms:
+- Deposit: $[50% of price] due at scheduling
+- Balance: $[50% of price] due upon completion
+- Accepted: Check, Cash, Card, Zelle
+
+WARRANTY
+
+- [Manufacturer warranty for specific shingle brand mentioned]
+- Workmanship: 10 years
+- Fully licensed and insured
+
+READY TO GET STARTED?
+Reply or call to confirm. We lock in your date and collect the deposit.
+
+[Company Name]
+Proposal powered by WonTheJob`
           }
         ],
-        max_tokens: 1200,
-        temperature: 0.3,
+        max_tokens: 1500,
+        temperature: 0.2,
       })
     });
 
     if (!response.ok) {
       const error = await response.json();
-      console.error('OpenAI error:', error);
       return res.status(500).json({ error: 'Generation failed' });
     }
 
     const data = await response.json();
     const proposal = data.choices[0]?.message?.content || '';
-
     return res.status(200).json({ proposal });
 
   } catch (error) {
-    console.error('Error:', error);
     return res.status(500).json({ error: 'Internal server error' });
   }
 }
