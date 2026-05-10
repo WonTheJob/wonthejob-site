@@ -702,56 +702,79 @@ async function runGenerate(){
 
 function buildFallback(input){
   const today=new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
-  const company=input.match(/company[:\s]+([^\n|]+)/i)?.[1]?.trim()||'Your Roofing Company';
-  const customer=input.match(/customer[:\s]+([^\n|]+)/i)?.[1]?.trim()||'Valued Customer';
-  const address=input.match(/address[:\s]+([^\n|]+)/i)?.[1]?.trim()||'Property Address';
-  const priceMatch=input.match(/price[:\s]+\$?([\d,]+)/i);
-  const price=priceMatch?parseInt(priceMatch[1].replace(',',''))*1:0;
-  const half=price?(price/2).toLocaleString():'—';
-  return `${company.toUpperCase()}
-Professional Roofing Services | Licensed & Insured
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-ROOFING PROPOSAL
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-Prepared for: ${customer}
-Property:     ${address}
-Date:         ${today}
-Valid for 30 days
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-SCOPE OF WORK
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-${input.split('\n').filter(l=>l.trim()&&!l.match(/^(company|customer|address|price|phone):/i)).map(l=>'→ '+l.trim()).join('\n')}
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-INVESTMENT
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-TOTAL:  ${price?'$'+price.toLocaleString():'Contact us for pricing'}
-
-Payment Terms:
-→ Deposit: ${price?'$'+half:' 50%'} due at scheduling
-→ Balance: Remaining due upon completion
-→ Accepted: Check, Cash, Card, Zelle
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-WARRANTY
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-→ Manufacturer material warranty included
-→ Workmanship: 10-year warranty
-→ Fully licensed and insured
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-Questions? Call or text us directly.
-This proposal is valid for 30 days.
-
-${company}
-Proposal powered by WonTheJob · wonthejob.com`
+  // Parse pipe-separated OR newline-separated input
+  const get=(key)=>{
+    const r=new RegExp(key+'[:\\s]+([^|\\n]+)','i');
+    return (input.match(r)?.[1]||'').trim();
+  };
+  const company=get('company')||'Your Roofing Company';
+  const customer=get('customer')||'Valued Customer';
+  const address=get('address')||'Property Address';
+  const phone=get('phone')||'';
+  const jobRaw=get('job')||get('description')||'';
+  const priceRaw=get('price');
+  const price=priceRaw?parseInt(priceRaw.replace(/[^\d]/g,''))||0:0;
+  const half=price?'$'+(price/2).toLocaleString():'50%';
+  const total=price?'$'+price.toLocaleString():'Contact us for pricing';
+  // Build scope items from job description
+  const jobItems=jobRaw.split(',').map(s=>s.trim()).filter(s=>s.length>2);
+  // If no job items found, try splitting the whole input by pipe and filtering
+  const scopeLines = jobItems.length > 0 ? jobItems : 
+    input.split('|').map(s=>s.trim())
+    .filter(s=>s&&!s.match(/^(company|customer|address|price|phone):/i))
+    .map(s=>s.replace(/^job:/i,'').trim())
+    .filter(s=>s.length>2);
+  // Build materials from scope items that mention brands
+  const materialKeywords=['GAF','Owens','CertainTeed','Timberline','Atlas','TAMKO','drip edge','underlayment','pipe boot','gutter','flashing','shingle','felt'];
+  const materials=scopeLines.filter(s=>materialKeywords.some(k=>s.toLowerCase().includes(k.toLowerCase())));
+  const scopeOutput=scopeLines.map(s=>'→ '+s).join('<br>');
+  const materialsOutput=materials.length>0?materials.map(s=>'→ '+s).join('<br>'):'→ All materials as specified and agreed upon<br>→ Manufacturer-grade fasteners and sealants included';
+  // Build line items for investment
+  const mainWork=scopeLines.filter(s=>s.match(/square|replacement|repair|install/i));
+  const extras=scopeLines.filter(s=>!s.match(/square|replacement|repair|install/i)&&s.length>5);
+  let lineItems='';
+  if(price>0&&mainWork.length>0){
+    const extraCost=extras.length*Math.round(price*0.05/extras.length)||0;
+    const mainCost=price-(extraCost*extras.length);
+    lineItems=mainWork.slice(0,1).map(s=>'Roofing system: $'+mainCost.toLocaleString()).join('')+'<br>';
+    if(extras.length>0)lineItems+=extras.map(s=>'Additional work: $'+extraCost.toLocaleString()).join('<br>')+'<br>';
+    lineItems+='─────────────────────<br>';
+  }
+  return company.toUpperCase()+'<br>Professional Roofing Services | Licensed &amp; Insured<br><br>'+
+'────────────────────────────────<br>'+
+'ROOFING PROPOSAL<br>'+
+'────────────────────────────────<br><br>'+
+'Prepared for: '+customer+'<br>'+
+'Property:     '+address+'<br>'+
+'Date:         '+today+'<br>'+
+'Valid for 30 days<br><br>'+
+'────────────────────────────────<br>'+
+'SCOPE OF WORK<br>'+
+'────────────────────────────────<br><br>'+
+scopeOutput+'<br><br>'+
+'────────────────────────────────<br>'+
+'MATERIALS<br>'+
+'────────────────────────────────<br><br>'+
+materialsOutput+'<br><br>'+
+'────────────────────────────────<br>'+
+'INVESTMENT<br>'+
+'────────────────────────────────<br><br>'+
+lineItems+
+'TOTAL:  '+total+'<br><br>'+
+'Payment Terms:<br>'+
+'→ Deposit: '+half+' due at scheduling<br>'+
+'→ Balance: Remaining 50% due upon completion<br>'+
+'→ Accepted: Check, Cash, Card, Zelle<br><br>'+
+'────────────────────────────────<br>'+
+'WARRANTY<br>'+
+'────────────────────────────────<br><br>'+
+'→ Manufacturer material warranty included<br>'+
+'→ Workmanship: 10-year warranty<br>'+
+'→ Fully licensed and insured<br><br>'+
+'────────────────────────────────<br><br>'+
+'Questions? '+(phone?'Call '+phone+' or reply':'Reply')+ ' to confirm your start date.<br><br>'+
+company+'<br>'+
+'Proposal powered by WonTheJob · wonthejob.com';
 }
 
 function doCopy(){
