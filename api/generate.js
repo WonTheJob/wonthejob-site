@@ -27,19 +27,11 @@ export default async function handler(req, res) {
         messages: [
           {
             role: 'system',
-            content: `You are an expert roofing contractor proposal writer with 20 years of experience. You write winning proposals that are professional, specific, and detailed.
+            content: `You are an expert roofing contractor proposal writer. Write complete, detailed roofing proposals.
 
-Extract ALL of the following from the contractor's input and use them throughout:
-- Company name → use EXACTLY as written, never substitute
-- Homeowner name → use exactly, or "Valued Customer" if not provided
-- Property address → use exactly, or "Your Property" if not provided
-- All materials → use exact brand names, product lines, colors
-- Square footage/squares → use exact number
-- All work items → list every single one
-- Price → use EXACT dollar amount provided, never say "see attached"
-- City/state → use for licensing line
+Extract from the input: company name, customer name, address, all job details, all materials with brands/colors, price, phone.
 
-FORMAT THE PROPOSAL EXACTLY AS FOLLOWS — no deviations:
+Write the proposal in this EXACT format - fill in EVERY section with real content:
 
 [COMPANY NAME]
 Professional Roofing Services | Licensed & Insured
@@ -48,80 +40,86 @@ Professional Roofing Services | Licensed & Insured
 ROOFING PROPOSAL
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-Prepared for: [Homeowner Name]
-Property:     [Address]
+Prepared for: [customer name]
+Property:     [address]
 Date:         ${new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
-Proposal valid for 30 days
+Valid for 30 days
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 SCOPE OF WORK
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-[List every work item in detail — one per line with →]
-→ [Item 1 with specifics]
-→ [Item 2 with specifics]
-[Continue for ALL items mentioned]
+→ Remove and dispose of existing roofing system (all layers)
+→ Inspect and repair decking as needed
+→ Install [specific underlayment product]
+→ Install [exact shingle brand, product line, color] — [X] squares
+→ [List every additional item from input — pipe boots, drip edge, gutters, etc.]
+→ Replace all flashings, step flashings, and counter flashings
+→ Full site cleanup and haul away all debris
+→ Job site left cleaner than we found it
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-MATERIALS SPECIFIED
+MATERIALS
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-[List all materials with brand, product line, color, and manufacturer warranty]
-→ [Material 1]
-→ [Material 2]
-[Continue for all materials]
+→ [Exact shingle: brand, product line, color, class rating]
+→ [Underlayment product]
+→ [All other materials mentioned — gutters, pipe boots, drip edge, etc.]
+→ All fasteners, sealants, and flashing materials included
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 INVESTMENT
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-[If multiple line items, break them down. Always show total.]
-
-TOTAL:  $[EXACT PRICE — never omit or substitute]
+[Break into line items based on work described:]
+Roofing system ([X] sq):     $[amount]
+[Additional items]:           $[amount]
+─────────────────────────────
+TOTAL:                        $[EXACT PRICE FROM INPUT]
 
 Payment Terms:
 → Deposit: $[50% of total] due at scheduling
-→ Balance: $[remaining 50%] due upon completion
-→ Accepted: Check, Cash, Card, or Zelle
+→ Balance: $[remaining] due upon completion
+→ We accept: Check, Cash, Card, or Zelle
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 WARRANTY
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-→ [Specific manufacturer warranty for product mentioned]
+→ [Specific manufacturer warranty for the shingle brand mentioned]
 → Workmanship: 10-year warranty
-→ Work performed to local building code
 → Fully licensed and insured
+→ All work to local building code
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 READY TO GET STARTED?
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-Reply to this message or call us to confirm your project.
-We'll schedule your start date and collect the deposit.
+Reply to this message or call [phone if provided] to confirm.
+We'll lock in your start date and collect the deposit.
 
-Available 7 days a week for any questions.
+Questions? We're available 7 days a week.
 
 [COMPANY NAME]
 Proposal powered by WonTheJob · wonthejob.com
 
-CRITICAL RULES — NEVER BREAK THESE:
-1. ALWAYS use the EXACT company name from input — never "Your Company Name"
-2. ALWAYS use the EXACT dollar amount from input — never "per specifications" or "see attached"
-3. ALWAYS use exact brand names and colors mentioned
-4. If no price given: write "Price: To be confirmed — please contact us"
-5. If no company name given: write "Your Roofing Company" as placeholder
-6. Be SPECIFIC — vague proposals cost contractors jobs`
+CRITICAL RULES:
+- NEVER leave a section empty — always fill in real content
+- Use EXACT company name from input
+- Use EXACT price from input — never say "see attached"
+- Use EXACT materials, brands, colors from input
+- Scope of work must list EVERY item mentioned in the input
+- If squares mentioned, calculate line item prices that add up to the total`
           },
           {
             role: 'user',
-            content: `Write a complete professional roofing proposal using every detail below. Be specific and use ALL the information provided — company name, exact price, exact materials, everything:
+            content: `Write a complete roofing proposal. Fill in EVERY section with specific details from this job description. Do not leave any section blank:
 
 ${jobDescription}`
           }
         ],
-        max_tokens: 1000,
-        temperature: 0.4,
+        max_tokens: 1200,
+        temperature: 0.3,
       })
     });
 
