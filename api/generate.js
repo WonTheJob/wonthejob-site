@@ -101,7 +101,8 @@ Now write the same style proposal using the actual job details I gave you above.
 
     const data = await response.json();
     const proposal = data.choices[0]?.message?.content || '';
-    return res.status(200).json({ proposal });
+    const htmlProposal = proposal.replace(/\n/g, '<br>').replace(/\r/g, '');
+    return res.status(200).json({ proposal: htmlProposal });
 
   } catch (error) {
     return res.status(500).json({ error: 'Internal server error' });
