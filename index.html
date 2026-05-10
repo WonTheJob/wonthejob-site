@@ -686,15 +686,15 @@ async function runGenerate(){
       out.innerHTML='';
       let i=0;
       const iv=setInterval(()=>{
-        if(i<text.length){out.innerHTML=text.substring(0,i)+'<span class="cursor"></span>';i+=4}
-        else{out.innerHTML=text;clearInterval(iv);busy=false;btn.disabled=false;btn.textContent='Generate another →';copyBtn.style.display='block';copyBtn.dataset.text=text}
+        if(i<text.length){out.innerHTML=text.substring(0,i).replace(/\n/g,'<br>')+'<span class="cursor"></span>';i+=4}
+        else{out.innerHTML=text.replace(/\n/g,'<br>');clearInterval(iv);busy=false;btn.disabled=false;btn.textContent='Generate another →';copyBtn.style.display='block';copyBtn.dataset.text=text}
       },10);
     }else throw new Error();
   }catch(e){
     const fb=buildFallback(input);
     out.innerHTML='';let i=0;
     const iv=setInterval(()=>{
-      if(i<fb.length){out.innerHTML=fb.substring(0,i)+'<span class="cursor"></span>';i+=4}
+      if(i<fb.length){out.innerHTML=fb.substring(0,i).replace(/\n/g,'<br>')+'<span class="cursor"></span>';i+=4}
       else{out.innerHTML=fb;clearInterval(iv);busy=false;btn.disabled=false;btn.textContent='Generate another →';copyBtn.style.display='block';copyBtn.dataset.text=fb}
     },10);
   }
